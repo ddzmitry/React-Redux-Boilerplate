@@ -1,48 +1,52 @@
-import React, {Component} from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {selectUser} from '../actions/index'
+import React , { Component} from 'react';
 
+
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+//importing an action creator but we need to connect to connect
+import {SelectUser} from "../actions/index";
 
 class UserList extends Component {
+    
+    createListItems(){
 
-    renderList() {
-        return this.props.users.map((user) => {
-            return (
-                <li
-                    key={user.id}
-                    onClick={() => this.props.selectUser(user)}
-                >
-                    {user.first} {user.last}
-                </li>
-            );
+        return this.props.users.map((user,key)=>{
+            return(
+            // here we will create our list of user
+                <li 
+                onClick={()=> this.props.SelectUser(user) } 
+                key={key} >{user.first} {user.last} </li>
+            )
         });
-    }
 
-    render() {
-        return (
+       
+        
+    }
+    render(){
+        console.log('this.props Users', this.props)
+        return(
             <ul>
-                {this.renderList()}
+                    {this.createListItems()}           
             </ul>
-        );
+        )
     }
-
 }
 
-// Get apps state and pass it as props to UserList
-//      > whenever state changes, the UserList will automatically re-render
-function mapStateToProps(state) {
+// Returns A State to the container 
+// takes a piece of the store from reducer
+//and passes as a props
+const mapStateToProps = (state, ownProps) => {
+    //WILL RETURN DATA TO THE COMPONENTE
+    // at ths point it will call allReducers and "cherry pick"
+    // only one function that will return an array of users;
     return {
         users: state.users
-    };
+    }
 }
-
-// Get actions and pass them as props to to UserList
-//      > now UserList has this.props.selectUser
+//dispatch - call funciton
 function matchDispatchToProps(dispatch){
-    return bindActionCreators({selectUser: selectUser}, dispatch);
+    return bindActionCreators({SelectUser: SelectUser },dispatch )
 }
 
-// We don't want to return the plain UserList (component) anymore, we want to return the smart Container
-//      > UserList is now aware of state and actions
-export default connect(mapStateToProps, matchDispatchToProps)(UserList);
+// we have to "Connect Component" to the Store ! 
+export default connect(mapStateToProps,matchDispatchToProps)( UserList);
